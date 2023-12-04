@@ -1021,18 +1021,18 @@ defmodule ModuleStuff do
   end
 
   def tortureToExtractTheNum(string, matcherList) do
-    containedNums = Enum.filter(matcherList, fn x -> String.contains?(string, x) end)
+    #containedNums = Enum.filter(matcherList, fn x -> String.contains?(string, x) end)
     stringToNumList = %{"one"=>"1", "two"=>"2", "three"=>"3", "four"=>"4", "five"=>"5", "six"=>"6", "seven"=>"7", "eight"=>"8", "nine"=>"9"}
 
-    recurseAndGetNumsInOrder(string, containedNums, []) |> Enum.reverse |> Enum.reduce("", fn numStr, acc -> acc <> Map.fetch!(stringToNumList, numStr) end)
+    recurseAndGetNumsInOrder(string, matcherList, []) |> Enum.reverse |> Enum.reduce("", fn numStr, acc -> acc <> Map.fetch!(stringToNumList, numStr) end)
 
   end
 
   def recurseAndGetNumsInOrder(string, matcherList, currentColl) do
-    unless Enum.empty?(matcherList) do
+    unless String.length(string) < 2 do
       startingNum = Enum.find(matcherList, fn x -> String.starts_with?(string, x) end)
       unless startingNum == nil do
-        recurseAndGetNumsInOrder(String.slice(string, 1, 100), Enum.reject(matcherList, fn x -> x == startingNum end), [startingNum | currentColl])
+        recurseAndGetNumsInOrder(String.slice(string, 1, 100), matcherList, [startingNum | currentColl])
       else
         recurseAndGetNumsInOrder(String.slice(string, 1,100), matcherList, currentColl)
       end
