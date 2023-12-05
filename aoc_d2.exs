@@ -9,7 +9,7 @@ defmodule ModuleStuff do
   end
 end
 
-Enum.map(inputList,
+encapsulatedGamesList = Enum.map(inputList,
   fn inputLine ->
     dividedString = String.split(inputLine, ":")
     {gameNum, _string} = List.first(dividedString) |> String.split(" ") |> List.last() |> Integer.parse()
@@ -25,12 +25,13 @@ Enum.map(inputList,
     )
     {gameNum, roundList}
   end
-) |> Enum.reject(
+)
+
+partOneSum = Enum.reject(encapsulatedGamesList,
   fn game ->
     {_gameNum, gameRounds} = game
     Enum.any?(gameRounds,
       fn roundMap ->
-        #IO.puts(roundMap)
         Enum.any?(colourList,
           fn colour ->
             #IO.puts("Red is #{Map.fetch!(roundMap, "red")}, Green is #{Map.fetch!(roundMap, "green")}, Blue is #{Map.fetch!(roundMap, "blue")}")
@@ -44,4 +45,28 @@ Enum.map(inputList,
     {gameNum, _gameRounds} = game
     gameNum
   end
-) |> List.foldl(0, fn x, acc -> acc + x end) |> IO.puts()
+) |> List.foldl(0, fn x, acc -> acc + x end)
+
+partTwoSum = Enum.map(encapsulatedGamesList,
+  fn game ->
+    {_gameNum, gameRounds} = game
+    {x, y, z} = List.foldl(gameRounds, {0, 0, 0},
+      fn round, acc ->
+        {redMax, greenMax, blueMax} = acc
+        red = Map.fetch!(round, "red")
+        green = Map.fetch!(round, "green")
+        blue = Map.fetch!(round, "blue")
+
+        {
+          if red > redMax do red else redMax end,
+          if green > greenMax do green else greenMax end,
+          if blue > blueMax do blue else blueMax end
+        }
+      end
+    )
+    x * y * z
+  end
+) |> List.foldl(0, fn x, acc -> acc + x end)
+
+IO.puts("Part one answer = #{partOneSum}")
+IO.puts("Part two answer is = #{partTwoSum}")
